@@ -1,12 +1,15 @@
 import { Component } from 'react'
 import Router from 'next/router'
-import {useRouter} from 'next/router'
 import queryString from "query-string";
 
 
 class Game extends Component{
 	constructor(props){
 		super(props);
+		this.jsonParams = {}
+	}
+	
+	componentDidMount(){
 		this.jsonParams = queryString.parse(Router.asPath.split(/\?/)[1]);
 	}
 	
