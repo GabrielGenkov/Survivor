@@ -1,1 +1,1 @@
-This is a project for HT6.
+This is a starter template for [Learn Next.js](https://nextjs.org/learn).
