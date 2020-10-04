@@ -22,21 +22,46 @@ class Game extends Component{
 		this.player.enter_name(this.jsonParams.name);
 		this.player.town.setTown(this.jsonParams.city);
 		if(this.jsonParams.player !== undefined){
-			Object.assign(this, this.jsonParams.player);
+			this.player = Object.assign(this.player, this.jsonParams.player);
+			console.log("zasadaaaaaaaaaa")
 		}
 		if(this.jsonParams.winner !== undefined){
 			if(this.jsonParams.winner)this.wins.pong++;
 			else this.loses.pong++
+			console.log(this.wins.pong)
 		}
 	}
 	
 	pong(){
-		Router.push({pathname: '/pong', query: {name: this.player.username, city: this.player.town.townName, player: this}})
+		Router.push({pathname: '/pong', query: {name: this.player.username, city: this.player.town.townName, player: this.player}})
 	}
 	
 	render(){
 		return (
 			<div id="game">
+				<style jsx global>{`
+      				body {
+						background: #FAAAAA;
+						color: black;
+						text-align: center;
+					  }
+					  
+					  button{
+						background-color: black;
+						border: none;
+						color: white;
+						padding: 15px 32px;
+						text-align: center;
+						text-decoration: none;
+						display: inline-block;
+						font-size: 16px;
+						margin: 4px 2px;
+						cursor: pointer;
+						border-radius: 35%;
+					  }
+					  button:hover {background-color: #e77722;}
+
+    			`}</style>
 				<h2 id="hello">Hello {this.jsonParams.name}. Wellcome to {this.jsonParams.city}!</h2>
 				{this.player.render()}
 				{this.player.town.render()}

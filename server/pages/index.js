@@ -30,10 +30,25 @@ class NameForm extends Component {
   }
 
   render() {
+    const center = {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      //background: "linear-gradient(110deg, #fdcd3b 60%, #ffed4b 60%)"
+    }
     return (
       <div>
-		  <h2>Survivor</h2>
-		  <form onSubmit={this.handleSubmit}>
+        <style jsx global>{`
+          body{
+            background-image: linear-gradient(110deg, #fdcd3b 60%, #ffed4b 60%);
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+          }
+          `}</style>
+		  <form style = {center} onSubmit={this.handleSubmit}>
+        <h2>Survivor</h2>
 		    <label htmlFor="name">Name:</label><br />
 	  		<input type="text" id="name" name="name" onChange={this.handleInputChange} /><br />
 	  		<label htmlFor="city">City:</label><br />
