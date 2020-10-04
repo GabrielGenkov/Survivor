@@ -125,7 +125,6 @@ function update(user, user2, canvas, ball) {
     user.score += 1;
     if(user.score >= 5){
     	playable = false
-    	console.log("winner user")
     	let params = getParams();
     	params.winner = true
     	Router.push({pathname: '/game', query: params})
@@ -137,7 +136,6 @@ function update(user, user2, canvas, ball) {
     user2.score += 1;
     if(user2.score >= 5){
     	playable = false
-    	console.log("winner user2")
     	let params = getParams();
     	params.winner = false
     	Router.push({pathname: '/game', query: params})

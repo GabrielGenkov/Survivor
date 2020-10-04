@@ -50,7 +50,6 @@ class Town extends Component {
         if(curr_level < this.max_lvl * 4){
             return false;
         }
-        console.log("Win for " + this.townName)
         return true;
     }
 
