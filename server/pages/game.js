@@ -22,18 +22,16 @@ class Game extends Component{
 		this.player.enter_name(this.jsonParams.name);
 		this.player.town.setTown(this.jsonParams.city);
 		if(this.jsonParams.player !== undefined){
-			this.player = Object.assign(this.player, this.jsonParams.player);
-			console.log("zasadaaaaaaaaaa")
+			Object.assign(this, this.jsonParams.player);
 		}
 		if(this.jsonParams.winner !== undefined){
 			if(this.jsonParams.winner)this.wins.pong++;
 			else this.loses.pong++
-			console.log(this.wins.pong)
 		}
 	}
 	
 	pong(){
-		Router.push({pathname: '/pong', query: {name: this.player.username, city: this.player.town.townName, player: this.player}})
+		Router.push({pathname: '/pong', query: {name: this.player.username, city: this.player.town.townName, player: this}})
 	}
 	
 	render(){
