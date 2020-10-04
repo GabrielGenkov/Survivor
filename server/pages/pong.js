@@ -1,11 +1,9 @@
 import react from "react";
-import{useEffect} from "react" 
+import{useEffect} from "react"
+import Router from 'next/router'
+import queryString from "query-string";
 
 const Pong = () => {
-
-
-
-/* some extra variables */
 
 const paddleWidth = 10;
 const paddleHeight = 100;
@@ -14,31 +12,30 @@ let upArrowPressed = false;
 let downArrowPressed = false;
 let upArrowPressed2 = false;
 let downArrowPressed2 = false;
+let playable = true;
 
+function getParams(){
+	console.log(queryString.parse(Router.asPath.split(/\?/)[1]))
+	return queryString.parse(Router.asPath.split(/\?/)[1]);
+	
+}
 
-/* objects declaration ends */
-
-/* drawing functions */
-// function to draw net
 function drawNet(ctx, net) {
 
   ctx.fillRect(net.x, net.y, net.width, net.height);
 }
 
-// function to draw score
 function drawScore(x, y, score, ctx) {
   ctx.fillStyle = '#fff';
   ctx.font = '35px sans-serif';
    ctx.fillText(score, x, y);
 }
 
-// function to draw paddle
 function drawPaddle(x, y, width, height, color, ctx) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, width, height);
 }
 
-// function to draw ball
 function drawBall(x, y, radius, color, ctx) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -47,52 +44,35 @@ function drawBall(x, y, radius, color, ctx) {
   ctx.fill();
 }
 
-/* drawing functions end */
-
-/* moving Paddles */
-// add an eventListener to browser window
-
-
-// gets activated when we press down a key
 function keyDownHandler(event) {
-  // get the keyCode
   switch (event.keyCode) {
-    // "up arrow" key
     case 87:
-      // set upArrowPressed = true
       upArrowPressed = true;
       break;
-    // "down arrow" key
     case 83:
       downArrowPressed = true;
       break;
     case 38:
-      // set upArrowPressed = true
       upArrowPressed2 = true;
       break;
-    // "down arrow" key
     case 40:
       downArrowPressed2 = true;
       break;
      
   }
 }
-// gets activated when we release the key
+
 function keyUpHandler(event) {
   switch (event.keyCode) {
-    // "up arrow" key
     case 87:
       upArrowPressed = false;
       break;
-    // "down arrow" key
     case 83:
       downArrowPressed = false;
       break;
     case 38:
-      // set upArrowPressed = true
       upArrowPressed2 = false;
       break;
-    // "down arrow" key
     case 40:
       downArrowPressed2 = false;
       break;
@@ -100,23 +80,16 @@ function keyUpHandler(event) {
   }
 }
 
-/* moving paddles section end */
-
-// reset the ball
 function reset(ball, canvas) {
-  // reset ball's value to older values
   ball.x = canvas.width / 2;
   ball.y = canvas.height / 2;
   ball.speed = 7;
 
-  // changes the direction of ball
   ball.velocityX = -ball.velocityX;
   ball.velocityY = -ball.velocityY;
 }
 
-// collision Detect function
 function collisionDetect(player, ball) {
-  // returns true or false
   player.top = player.y;
   player.right = player.x + player.width;
   player.bottom = player.y + player.height;
@@ -130,11 +103,8 @@ function collisionDetect(player, ball) {
   return ball.left < player.right && ball.top < player.bottom && ball.right > player.left && ball.bottom > player.top;
 }
 
-// update function, to update things position
 function update(user, user2, canvas, ball) {
   
-  
-  // move the paddle
   if (upArrowPressed && user.y  > 0) {
     user.y -= 8;  
   } else if (downArrowPressed && (user.y < canvas.height - user.height) ){
@@ -147,88 +117,76 @@ function update(user, user2, canvas, ball) {
   }
 
 
-  // check if ball hits top or bottom wall
   if (ball.y + ball.radius >= canvas.height || ball.y - ball.radius <= 0) {
     ball.velocityY = -ball.velocityY;
   }
 
-   // if ball hit on right wall
    if (ball.x + ball.radius >= canvas.width) {
-    // then user scored 1 point
     user.score += 1;
+    if(user.score >= 5){
+    	playable = false
+    	console.log("winner user")
+    	let params = getParams();
+    	params.winner = true
+    	Router.push({pathname: '/game', query: params})
+    }
     reset(ball, canvas);
   }
 
-  // if ball hit on left wall
   if (ball.x - ball.radius <= 0) {
-    // then user2 scored 1 poinZ
     user2.score += 1;
+    if(user2.score >= 5){
+    	playable = false
+    	console.log("winner user2")
+    	let params = getParams();
+    	params.winner = false
+    	Router.push({pathname: '/game', query: params})
+    }
     reset(ball, canvas);
   }
 
-  // move the ball
   ball.x += ball.velocityX;
   ball.y += ball.velocityY;
 
-  // collision detection on paddles
   let player = (ball.x < canvas.width / 2) ? user : user2;
   if (collisionDetect(player, ball)) {
     let angle = 0;
 
-    // if ball hit the top of paddle
     if (ball.y < (player.y + player.height / 2)) {
       angle = -1 * Math.PI / 4;
     } else if (ball.y > (player.y + player.height / 2)) {
-      // if it hit the bottom of paddle
       angle = Math.PI / 4;
     }
 
-    /* change velocity of ball according to on which paddle the ball hitted */
     ball.velocityX = (player === user ? 1 : -1) * ball.speed * Math.cos(angle);
     ball.velocityY = ball.speed * Math.sin(angle);
 
-    // increase ball speed
     ball.speed += 0.2;
   }
 }
 
-// render function draws everything on to canvas
 function render(ctx, canvas, user, user2, ball, net) {
-  // set a style
-  ctx.fillStyle = "#000"; /* whatever comes below this acquires black color (#000). */
-  // draws the black board
+  ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // draw net
   drawNet(ctx, net);
-  // draw user score
   drawScore(canvas.width / 4, canvas.height / 6, user.score, ctx);
-  // draw user2 score
   drawScore(3 * canvas.width / 4, canvas.height / 6, user2.score, ctx);
-  // draw user paddle
   drawPaddle(user.x, user.y, user.width, user.height, user.color, ctx);
-  // draw user2 paddle
   drawPaddle(user2.x, user2.y, user2.width, user2.height, user2.color, ctx);
   
-
-  // draw ball
   drawBall(ball.x, ball.y, ball.radius, ball.color, ctx);
 }
 
-// gameLoop
 function gameLoop(user, user2, canvas, ball, ctx, net) {
-  // update() function here
+  if(!playable)return;
   update(user, user2, canvas, ball);
-  // render() function here
-    render(ctx, canvas, user, user2, ball, net);
+  render(ctx, canvas, user, user2, ball, net);
 }
   useEffect(() => {
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-      
-
-  /* objects */
-  // net
+ 
     const net = {
       x: canvas.width / 2 - 2,
       y: 0,
@@ -237,7 +195,6 @@ function gameLoop(user, user2, canvas, ball, ctx, net) {
       color: "#FFF"
     };
 
-// user paddle
   const user = {
     x: 10,
     y: canvas.height / 2 - paddleHeight / 2,
@@ -257,8 +214,6 @@ function gameLoop(user, user2, canvas, ball, ctx, net) {
   };
 
 
-
-// ball
   const ball = {
     x: canvas.width / 2,
     y: canvas.height / 2,
