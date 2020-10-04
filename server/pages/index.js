@@ -26,8 +26,6 @@ class NameForm extends Component {
 
   handleSubmit(event) {
 	Router.push({pathname: './game', query: {name: this.state.name, city:this.state.city}})
-	
-    alert('A name was submitted: ' + this.state.name + ' ' + this.state.city);
     event.preventDefault();
   }
 
